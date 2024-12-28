@@ -43,7 +43,7 @@ body{
 }
 
 .control-panel {
-    height: 300px;
+    height: 400px;
     width: 100%;
     bottom: 0;
     position: fixed;
@@ -122,6 +122,7 @@ input:hover,input:active {
 
 #speed-controller {
     grid-column: 1;
+    min-width: 500px;
 }
 
 .vertical-buttons {
@@ -180,7 +181,14 @@ input:hover,input:active {
     overflow-y: auto;
     height: 100%;
 }
-
+.tabsingle {
+    grid-template-columns: repeat(1, 1fr);
+    grid-template-rows: 1;
+    display: none;
+    padding: 10px;
+    overflow-y: auto;
+    height: 100%;
+}
 .tab#about {
     display: grid;
 }
@@ -378,4 +386,63 @@ input:hover,input:active {
 }
 #load-panel-title * {
     display: inline;
+}
+
+
+.slidecontainer {
+    width: 400px; /* Width of the outside container */
+  }
+  
+  /* The slider itself */
+  .slider {
+    -webkit-appearance: none;  /* Override default CSS styles */
+    appearance: none;
+    min-width: 350px; /* Full-width */
+    height: 25px; /* Specified height */
+    background: #d3d3d3; /* Grey background */
+    outline: none; /* Remove outline */
+    opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+    -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+    transition: opacity .2s;
+  }
+  
+  /* Mouse-over effects */
+  .slider:hover {
+    opacity: 1; /* Fully shown on mouse-over */
+  }
+  
+  /* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none; /* Override default look */
+    appearance: none;
+    width: 25px; /* Set a specific slider handle width */
+    height: 25px; /* Slider handle height */
+    background: #04AA6D; /* Green background */
+    cursor: pointer; /* Cursor on hover */
+  }
+  
+  .slider::-moz-range-thumb {
+    width: 25px; /* Set a specific slider handle width */
+    height: 25px; /* Slider handle height */
+    background: #04AA6D; /* Green background */
+    cursor: pointer; /* Cursor on hover */
+  }
+
+  #anatomy-tooltip {
+    position: absolute;
+    background: white;
+    border: 1px solid black;
+    padding: 5px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+    pointer-events: none; /* Prevent mouse interaction with the tooltip */
+    z-index: 1000; /* Ensure it overlays other elements */
+}
+svg {
+    overflow: visible;
+    /* border: 1px solid black; */
+}
+#treeContainer {
+    padding-left: 60px; /* Adjust as needed */
+    position: relative;
 }
