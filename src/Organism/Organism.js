@@ -6,7 +6,7 @@ const Anatomy = require("./Anatomy");
 const Brain = require("./Perception/Brain");
 const FossilRecord = require("../Stats/FossilRecord");
 const SerializeHelper = require("../Utils/SerializeHelper");
-
+const TreeOfLifeChart = require("../Stats/TreeOfLifeChart");
 class Organism {
     constructor(col, row, env, parent=null) {
         this.c = col;
@@ -115,6 +115,7 @@ class Organism {
             }
             else {
                 org.species.addPop();
+                TreeOfLifeChart.incrementPopulation(org.species.name);
             }
         }
         Math.max(this.food_collected -= this.foodNeeded(), 0);

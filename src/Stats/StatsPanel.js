@@ -1,11 +1,12 @@
 const PopulationChart = require("./Charts/PopulationChart");
+const PopulationChartLog = require("./Charts/PopulationChartLog");
 const SpeciesChart = require("./Charts/SpeciesChart");
 const MutationChart = require("./Charts/MutationChart");
 const CellsChart = require("./Charts/CellsChart");
 const FossilRecord = require("./FossilRecord");
-
-
-const ChartSelections = [PopulationChart, SpeciesChart, CellsChart, MutationChart];
+const TreeOfLifeChart = require("./TreeOfLifeChart");
+// TODO looks like to me this is how I can make new charts without editing the old ones.
+const ChartSelections = [PopulationChart, PopulationChartLog, SpeciesChart, CellsChart, MutationChart];
 
 class StatsPanel {
     constructor(env) {
@@ -58,6 +59,9 @@ class StatsPanel {
             $('#top-species').text("Most Populous Species: None");
         $('#largest-org').text("Largest Organism Ever: " + this.env.largest_cell_count + " cells");
         $('#avg-mut').text("Average Mutation Rate: " + Math.round(this.env.averageMutability() * 100) / 100);
+
+
+       
     }
 
     reset() {
@@ -65,5 +69,20 @@ class StatsPanel {
     }
     
 }
+
+// Example tree data
+// const treeData = {
+//     name: "Life",
+//     children: [
+//         { name: "Animals", children: [{ name: "Mammals" }, { name: "Birds" }] },
+//         { name: "Plants", children: [{ name: "Ferns" }, { name: "Mosses" }] }
+//     ]
+// };
+
+// // Render the tree in the `treeContainer` div
+// document.addEventListener("DOMContentLoaded", () => {
+//     TreeOfLifeChart.renderTree(treeData, "treeContainer");
+// });
+
 
 module.exports = StatsPanel;
