@@ -33,6 +33,7 @@ class OrganismEditor extends Environment{
         this.renderer.renderFullGrid(this.grid_map.grid);
     }
 
+    // TODO Is this the cell add function? like when it mutates?
     // absolute c r, not local
     addCellToOrg(c, r, state) {
         var center = this.grid_map.getCenter();
@@ -46,7 +47,7 @@ class OrganismEditor extends Environment{
         else if (this.organism.anatomy.canAddCellAt(loc_c, loc_r)){
             this.changeCell(c, r, state, this.organism.anatomy.addDefaultCell(state, loc_c, loc_r));
         }
-        this.organism.species = new Species(this.organism.anatomy, null, 0);
+        this.organism.species = new Species(this.organism.anatomy, null, 0); // New species? 
     }
 
     removeCellFromOrg(c, r) {

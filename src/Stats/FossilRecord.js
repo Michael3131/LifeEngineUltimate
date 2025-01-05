@@ -1,16 +1,16 @@
 const CellStates = require("../Organism/Cell/CellStates");
 const SerializeHelper = require("../Utils/SerializeHelper");
 const Species = require("./Species");
-
+const TreeOfLifeChart = require("./TreeOfLifeChart");
 const FossilRecord = {
     init: function(){
         this.extant_species = {};
         this.extinct_species = {};
 
         // if an organism has fewer than this cumulative pop, discard them on extinction
-        this.min_discard = 10;
+        this.min_discard = 1;
 
-        this.record_size_limit = 500; // store this many data points
+        this.record_size_limit = 5000000; // original 500 // store this many data points
     },
 
     setEnv: function(env) {
@@ -22,14 +22,56 @@ const FossilRecord = {
         var new_species = new Species(org.anatomy, ancestor, this.env.total_ticks);
         this.extant_species[new_species.name] = new_species;
         org.species = new_species;
+        // TODO
+          // ADDON
+        // Logic for creating a new species...
+        if (!ancestor)
+        {
+            console.log("new tree!")
+            let treeData = {
+                name: org.species.name,
+                anatomy: org.anatomy,
+                the_org: org,
+                children: [],
+            };
+            // build new tree from that one?
+            console.log("before render of new",treeData)
+            TreeOfLifeChart.renderTree(treeData, "treeContainer")
+            TreeOfLifeChart.incrementPopulation(org.species.name);
+        }
+        else
+        {
+            // console.log("BEFORE");
+            // console.log(org);
+            // console.log("org");
+            // console.log(ancestor);
+            const newSpecies = {
+                name: org.species.name,         // Name of the new species
+                parent: ancestor.name,     // Parent species name
+                anatomy: org.anatomy,
+                the_org: org,
+                children: [],        // Additional data if needed
+            };
+
+
+            //console.log("Added New Species in FR: ",newSpecies.anatomy);
+            // Dynamically update the Tree of Life
+            TreeOfLifeChart.updateTree(newSpecies);
+            TreeOfLifeChart.incrementPopulation(org.species.name);
+        }
         return new_species;
     },
 
     addSpeciesObj: function(species) {
+        console.log("Is this hit??")
         if (this.extant_species[species.name]) {
             console.warn('Tried to add already existing species. Add failed.');
             return;
         }
+
+ 
+
+
         this.extant_species[species.name] = species;
         return species;
     },
@@ -57,7 +99,8 @@ const FossilRecord = {
         species.ancestor = undefined; // garbage collect ancestors
         delete this.extant_species[species.name];
         if (species.cumulative_pop >= this.min_discard) {
-            // TODO: store as extinct species
+            TreeOfLifeChart.markSpeciesExtinct(species.name);
+            // TODO: store as extinct species // tee hee i did it for you :)
             return true;
         }
         return false;
@@ -144,6 +187,8 @@ const FossilRecord = {
     },
 
     clear_record() {
+        console.log("USe this");
+        TreeOfLifeChart.clearTree();
         this.extant_species = [];
         this.extinct_species = [];
         this.setData();
@@ -169,13 +214,28 @@ const FossilRecord = {
         return record;
     },
 
+    // FossilRecord.js
+    getFossilRecordTree() {
+        //console.log(this.)
+        return {
+            name: "Life",
+            children: [
+                { name: "Poops", children: [{ name: "PeePee" }, { name: "Whaaa" }] },
+                { name: "Plants", children: [{ name: "Ferns" }, { name: "Mosses" }] }
+            ]
+        };
+    },
+
+
     loadRaw(record) {
         SerializeHelper.overwriteNonObjects(record, this);
         for (let key in record.records) {
             this[key] = record.records[key];
         }
     }
+    
 
+    
 }
 
 FossilRecord.init();

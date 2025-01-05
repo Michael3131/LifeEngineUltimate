@@ -7,6 +7,7 @@
 		<link rel="stylesheet" href="./css/style.css">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
 		<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+		<script type="text/javascript" src="https://d3js.org/d3.v7.min.js"></script>
 	</head>
 	<body>
 		<script src="./js/bundle.js"></script>
@@ -14,6 +15,8 @@
 		<div id='env'>
 			<canvas id='env-canvas'></canvas>
 		</div>
+		<div id="anatomy-tooltip" style="position: absolute; display: none; pointer-events: none;"></div>
+
 		<div class='control-panel'>
 			<div id='speed-controller' class='control-set'>
 				<div class='vertical-buttons'>
@@ -36,6 +39,18 @@
 					<label id="brush-slider-label" for="brush-slider" title='Size of the brush for food, walls, and killing'><i class="fa fa-brush"></i> Brush Size </label>
 					<input id="brush-slider" type="range" min="0" max="15" value="2">
 				</div>
+				<div class="slidecontainer">
+					<label for="population-threshold-slider">
+						<input type="range" min="1" max="100" value="10" class="slider" id='population-threshold-slider'>
+						Subtree Size Cutoff: 
+						<p id='slider-value'>10</p>
+					</label>
+					<label for="toggle-extinct-leaves">
+						Show Extinct Leaves:
+						<input type="checkbox" id="toggle-extinct-leaves" checked>
+					</label>
+				</div>
+
 			</div>
 
 			<div id='tab-container' class='control-set'>
@@ -46,6 +61,7 @@
 					<p class='tabnav-item' id='world-controls'>World Controls</p>
 					<p class='tabnav-item' id='hyperparameters'>Evolution Controls</p>
 					<p class='tabnav-item' id='stats'>Statistics</p>
+					<p class='tabnav-item' id='tree-of-life'>Tree Of Life</p>
 					<button id="minimize" title="Minimze Control Panel."><i class="fa fa-minus-square"></i></button>
 				</div>
 
@@ -278,6 +294,7 @@
 						<label for="chart-option">Chart: </label>
 						<select name="chart-option" id="chart-option">
 							<option value="population">Population</option>
+							<option value="population-log">Population Logarithmic</option>
 							<option value="species">Species</option>
 							<option value="mut-rate">Organism Structure</option>
 							<option value="mut-rate">Mutation Rate</option>
@@ -287,6 +304,11 @@
 					<div class='right-half'>
 						<div id="chartContainer"></div>
 					</div>
+				</div>
+				<div id="tree-of-life" class="tab-single">
+					<!-- This is a test section -->
+					<div id="treeContainer" style="width: 100%; height: 600px; overflow: hidden;"></div>
+
 				</div>
 			</div>
 		</div>
@@ -335,6 +357,9 @@
 		<div id='maximize-hot-control' class='hot-controls'>
 			<button id="maximize" title="Show Control Panel."><i class="fa fa-plus-square"></i></button>
 		</div>
+	
+		
 		
 	</body>
+
 </html>
