@@ -37,7 +37,7 @@ body{
 }
 
 #treeContainer {
-    background-color: var(--panel-bg);
+    background-color: #616161;
     position: absolute;
 }
 
