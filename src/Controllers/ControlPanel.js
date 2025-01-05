@@ -154,6 +154,19 @@ class ControlPanel {
         }.bind(this));
 
         $('.tree-of-life-button').click(function () {
+            // TODO remove the little gif from playing 
+            //$('.headless')[0].click();  
+            if (WorldConfig.tree_of_life)
+            {
+                $('#treeContainer').css('z-index', "1100");
+            }      
+            else
+            {
+                $('#treeContainer').css('z-index', "900");
+            }
+            WorldConfig.tree_of_life = !(WorldConfig.tree_of_life)
+        
+        
         }.bind(this));
     }
 

@@ -34,13 +34,18 @@ body{
     image-rendering: -webkit-crisp-edges;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
-    z-index: 1000;
 }
-
+#treeContainer {
+    background-color: var(--panel-bg);
+    position: absolute;
+}
 #env-canvas {
     top: 0;
     left: 0;
     position: relative;
+    z-index: 1000;
+    position: absolute;
+
 }
 
 .control-panel {
@@ -442,8 +447,4 @@ input:hover,input:active {
 svg {
     overflow: visible;
     /* border: 1px solid black; */
-}
-#treeContainer {
-    padding-left: 60px; /* Adjust as needed */
-    position: relative;
 }
