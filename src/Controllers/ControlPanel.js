@@ -114,6 +114,10 @@ class ControlPanel {
                     break;
                 case 'b':
                     $('#clear-walls').click();
+                    break;
+                case 't':
+                    $(".tree-of-life-button")[0].click();
+                    
             }
         });
     }
@@ -147,6 +151,9 @@ class ControlPanel {
                 $('#headless-notification').css('display', 'block');
             }
             WorldConfig.headless = !WorldConfig.headless;
+        }.bind(this));
+
+        $('.tree-of-life-button').click(function () {
         }.bind(this));
     }
 
