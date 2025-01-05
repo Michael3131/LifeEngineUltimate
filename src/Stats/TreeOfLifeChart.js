@@ -157,7 +157,6 @@ export function showAnatomyTooltip(event, anatomy) {
 
 export function renderTree(initialData, containerId) {
     if (!isRenderingEnabled && treeData) return; // Skip rendering if disabled
-    console.log("render tree hit", initialData)
     treeData = initialData; // Set the initial tree data
     
     const width = 750, height = 250;
