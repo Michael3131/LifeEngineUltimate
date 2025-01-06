@@ -96,22 +96,8 @@ function filterTreeByPopulation(node) {
     return { ...node, children: filteredChildren }; // Return the filtered node
 }
 
-// function filterTreeByPopulation(node) {
-//     const subtreePopulation = calculateSubtreePopulation(node);
-//     node.subtreePopulation = subtreePopulation; // Store for rendering
-
-//     if (subtreePopulation < populationThreshold) {
-//         return null; // Exclude this node and its subtree
-//     }
-
-//     const filteredChildren = (node.children || []).map(filterTreeByPopulation).filter(Boolean);
-//     return { ...node, children: filteredChildren }; // Return the filtered node
-// }
-
 export function getAnatomy(speciesName) {
-    //console.log("Getting anatomy:,",speciesName);
-    //console.log("got",searchForNodeByName(treeData,speciesName).anatomy);
-    return searchForNodeByName(treeData,speciesName).anatomy;
+    return searchForNodeByName(treeData, speciesName).anatomy;
 }
 
 export function showAnatomyTooltip(event, anatomy) {
@@ -125,7 +111,6 @@ export function showAnatomyTooltip(event, anatomy) {
 
     // Render anatomy cells in the SVG
     anatomy.cells.forEach(cell => {
-        //console.log("Cell",cell);
         svg.append("rect") // Change circle to rect for square representation
             .attr("x", cell.loc_col * 10 + 10) // Scale and center
             .attr("y", cell.loc_row * 10 + 10)
@@ -183,19 +168,22 @@ export function renderTree(initialData, containerId) {
             })
         ).append("g").attr("width", width)
         .attr("height", height)
-        .append("g").attr("transform", `translate(0,20)`); // Center the tree;
+        .append("g").attr("transform", `translate(${width / 2},${height / 2})`); // Center the tree
 
     const g = svg;
-   // nodeEnter.attr("transform", d => `translate(${Math.max(10, d.y)},${d.x})`); // Ensure x >= 10
 
     const filteredTreeData = filterTreeByPopulation(treeData);
     const root = d3.hierarchy(filteredTreeData);
 
-    // Create a tree layout with horizontal orientation
-    const treeLayout = d3.tree().size([height,  width ]);
+    // Create a radial tree layout
+    const treeLayout = d3.cluster().size([2 * Math.PI, Math.min(width, height) / 2 - 100]);
     treeLayout(root);
 
-    // Function to update tree
+    // Define radial link generator
+    const linkGenerator = d3.linkRadial()
+        .angle(d => d.x)
+        .radius(d => d.y);
+
     function update(source) {
         if (!isRenderingEnabled) return; // Skip updates if rendering is disabled
 
@@ -211,10 +199,7 @@ export function renderTree(initialData, containerId) {
             .append("path")
             .attr("class", "link")
             .merge(link)
-            .attr("d", d3.linkHorizontal()
-                .x(d => d.y)
-                .y(d => d.x)
-            )
+            .attr("d", linkGenerator)
             .attr("fill", "none")
             .attr("stroke", "#ccc")
             .attr("stroke-width", 1.5);
@@ -228,7 +213,10 @@ export function renderTree(initialData, containerId) {
         const nodeEnter = node.enter()
             .append("g")
             .attr("class", "node")
-            .attr("transform", d => `translate(${d.y},${d.x})`)
+            .attr("transform", d => `
+                rotate(${(d.x * 180 / Math.PI) - 90})
+                translate(${d.y})
+            `)
             .on("click", function(event, d) {
                 if (d.children) {
                     d._children = d.children; // Hide children
@@ -239,10 +227,6 @@ export function renderTree(initialData, containerId) {
                 }
                 update(d);
             })
-            // .on("contextmenu", function (event, d) {
-            //     event.preventDefault(); // Prevent the default context menu
-            //     openOrganismInEditor(d.data.name); // Open in editor on right-click
-            // })
             .on("mouseover", function (event, d) {
                 const anatomy = getAnatomy(d.data.name);
                 if (anatomy) {
@@ -263,25 +247,11 @@ export function renderTree(initialData, containerId) {
             .attr("fill", d => d.children || d._children ? "#555" : "#999");
 
         nodeEnter.append("text")
-            .attr("dy", 3)
-            .attr("x", d => (d.children || d._children ? -15 : 15)) // Spaced further for visibility
-            .style("text-anchor", d => (d.children || d._children ? "end" : "start"))
+            .attr("dy", "0.31em")
+            .attr("x", d => d.x < Math.PI ? 6 : -6)
+            .attr("text-anchor", d => d.x < Math.PI ? "start" : "end")
+            .attr("transform", d => d.x < Math.PI ? null : "rotate(180)")
             .style("fill", d => (extinctSpeciesSet.has(d.data.name) ? "red" : "black")) // Color based on extinction status
-            .text(d => {
-                const population = populationMap.get(d.data.name) || 0; // Show only this species' population
-                return `${d.data.name} (${population})`;
-            });
-
-        const nodeUpdate = node.merge(nodeEnter)
-            .transition()
-            .duration(300)
-            .attr("transform", d => `translate(${d.y},${d.x})`);
-
-        nodeUpdate.select("circle")
-            .attr("fill", d => d.children || d._children ? "#555" : "#999");
-
-        nodeUpdate.select("text")
-            .style("fill", d => (extinctSpeciesSet.has(d.data.name) ? "red" : "black")) // Update color dynamically
             .text(d => {
                 const population = populationMap.get(d.data.name) || 0; // Show only this species' population
                 return `${d.data.name} (${population})`;
@@ -290,15 +260,6 @@ export function renderTree(initialData, containerId) {
         node.exit().remove();
     }
 
-    // root.descendants().forEach(d => {
-        //     if (d.depth > 1) {
-            //         d.data.originalChildren = d.children; // Backup all children
-            //         d._children = d.children; // Store children in _children
-            //         d.children = null; // Hide children
-            //     }
-            // });
-            
-    // Collapse children initially
     root.descendants().forEach(d => {
         if (d.depth > 1 && calculateSubtreePopulation(d.data) < populationThreshold) {
             d.data.originalChildren = d.children; // Backup all children
@@ -340,17 +301,10 @@ export function updateTree(newSpecies) {
 export function incrementPopulation(speciesName) {
     const currentPopulation = populationMap.get(speciesName) || 0;
     populationMap.set(speciesName, currentPopulation + 1);
-    // Re-render the tree with updated population
-    // TODO I think i dont care about this for now
-    // if (isRenderingEnabled) {
-    //     d3.select("#treeContainer").html("");
-    //     renderTree(treeData, "treeContainer");
-    // }
 }
 
 export function markSpeciesExtinct(speciesName) {
     extinctSpeciesSet.add(speciesName); // Mark species as extinct
-    // Re-render the tree with updated extinction status
     if (isRenderingEnabled) {
         d3.select("#treeContainer").html("");
         renderTree(treeData, "treeContainer");
