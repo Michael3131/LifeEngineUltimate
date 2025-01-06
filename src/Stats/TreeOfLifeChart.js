@@ -157,15 +157,13 @@ export function showAnatomyTooltip(event, anatomy) {
 export function renderTree(initialData, containerId) {
     if (!isRenderingEnabled && treeData) return; // Skip rendering if disabled
 
-
-    console.log("removeme")
     treeData = initialData; // Set the initial tree data
     // Select the container
     const container = d3.select("#treeContainer");
 
     // Get container dimensions
     const width = container.node().clientWidth -(container.node().clientWidth)/4;
-    const height = container.node().clientHeight-(container.node().clientHeight)/7;
+    const height = container.node().clientHeight//-(container.node().clientHeight)/4;
    
     const svg = d3.select(`#${containerId}`)
         .append("svg")
@@ -185,7 +183,7 @@ export function renderTree(initialData, containerId) {
             })
         ).append("g").attr("width", width)
         .attr("height", height)
-        .append("g")//.attr("transform", `translate(120,20)`); // Center the tree;
+        .append("g").attr("transform", `translate(0,20)`); // Center the tree;
 
     const g = svg;
    // nodeEnter.attr("transform", d => `translate(${Math.max(10, d.y)},${d.x})`); // Ensure x >= 10
@@ -194,7 +192,7 @@ export function renderTree(initialData, containerId) {
     const root = d3.hierarchy(filteredTreeData);
 
     // Create a tree layout with horizontal orientation
-    const treeLayout = d3.tree().size([height,  width - 100]);
+    const treeLayout = d3.tree().size([height,  width ]);
     treeLayout(root);
 
     // Function to update tree
