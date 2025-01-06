@@ -23,6 +23,24 @@ export function setPopulationThreshold(threshold) {
         renderTree(treeData, "treeContainer");
     }
 }
+
+export function changePopulationThreshold10x() {
+    populationThreshold = populationThreshold * 10;
+    // Re-render the tree with the new threshold
+    if (isRenderingEnabled) {
+        d3.select("#treeContainer").html("");
+        renderTree(treeData, "treeContainer");
+    }
+}
+export function changePopulationThresholddiv10() {
+    populationThreshold = Math.ceil(populationThreshold * .1);
+    // Re-render the tree with the new threshold
+    if (isRenderingEnabled) {
+        d3.select("#treeContainer").html("");
+        renderTree(treeData, "treeContainer");
+    }
+}
+
 export function searchForNodeByName(node, name) {
     if (node.name === name) return node;
     if (!node.children) return null;
@@ -135,38 +153,26 @@ export function showAnatomyTooltip(event, anatomy) {
      tooltip.style("top", `${top}px`);
 }
 
-// function openOrganismInEditor(speciesName) {
-//     console.log(`Opening organism: ${speciesName} in the editor.`);
-//     const editorTab = document.getElementById('editor');
-//     if (editorTab) {
-//         // Switch to the Editor tab
-//         document.querySelectorAll('.tab').forEach(tab => tab.style.display = 'none');
-//         editorTab.style.display = 'block';
-//         console.log("Editor tab displayed.");
-//     } else {
-//         console.error("#editor tab not found.");
-//     }
-
-//     // Pass the species name to the EditorController
-//     if (window.EditorController && window.EditorController.loadSpeciesInEditor) {
-//         window.EditorController.loadSpeciesInEditor(speciesName);
-//     } else {
-//         console.error("EditorController not found or loadSpeciesInEditor not defined.");
-//     }
-// }
 
 export function renderTree(initialData, containerId) {
     if (!isRenderingEnabled && treeData) return; // Skip rendering if disabled
-    treeData = initialData; // Set the initial tree data
-    
-    const width = 750, height = 250;
 
+
+    console.log("removeme")
+    treeData = initialData; // Set the initial tree data
+    // Select the container
+    const container = d3.select("#treeContainer");
+
+    // Get container dimensions
+    const width = container.node().clientWidth -(container.node().clientWidth)/4;
+    const height = container.node().clientHeight-(container.node().clientHeight)/7;
+   
     const svg = d3.select(`#${containerId}`)
         .append("svg")
-        .attr("width", "100%")
-        .attr("height", "100%")
+        .attr("width", width)
+        .attr("height", height)
         .call(
-            d3.zoom().on("zoom", (event) => {
+            d3.zoom().on("zoom", (event) => {          
                 g.attr("transform", event.transform);
 
                 // Scale the text size dynamically
@@ -177,17 +183,18 @@ export function renderTree(initialData, containerId) {
                 g.selectAll("circle")
                     .attr("r", 10 / event.transform.k + "px");
             })
-        )
-        .append("g");
+        ).append("g").attr("width", width)
+        .attr("height", height)
+        .append("g")//.attr("transform", `translate(120,20)`); // Center the tree;
 
-    const g = svg.append("g").attr("transform", "translate(70,50)");
+    const g = svg;
    // nodeEnter.attr("transform", d => `translate(${Math.max(10, d.y)},${d.x})`); // Ensure x >= 10
 
     const filteredTreeData = filterTreeByPopulation(treeData);
     const root = d3.hierarchy(filteredTreeData);
 
     // Create a tree layout with horizontal orientation
-    const treeLayout = d3.tree().size([height , width ]);
+    const treeLayout = d3.tree().size([height,  width - 100]);
     treeLayout(root);
 
     // Function to update tree
@@ -336,10 +343,11 @@ export function incrementPopulation(speciesName) {
     const currentPopulation = populationMap.get(speciesName) || 0;
     populationMap.set(speciesName, currentPopulation + 1);
     // Re-render the tree with updated population
-    if (isRenderingEnabled) {
-        d3.select("#treeContainer").html("");
-        renderTree(treeData, "treeContainer");
-    }
+    // TODO I think i dont care about this for now
+    // if (isRenderingEnabled) {
+    //     d3.select("#treeContainer").html("");
+    //     renderTree(treeData, "treeContainer");
+    // }
 }
 
 export function markSpeciesExtinct(speciesName) {
