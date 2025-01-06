@@ -125,7 +125,7 @@ class ControlPanel {
     defineEngineSpeedControls(){
         this.slider = document.getElementById("slider");
         this.slider.oninput = function() {
-            const max_fps = 300;
+            const max_fps = 500;
             this.fps = parseInt(this.slider.value);
             if (this.fps>=max_fps) this.fps = 1000;
             if (this.engine.running) {
