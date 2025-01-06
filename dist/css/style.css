@@ -41,9 +41,9 @@ body{
     position: absolute;
 }
 
-#treeContainer > svg {
+/* #treeContainer > svg {
     padding-left: 120px;
-}
+} */
 
 #env-canvas {
     top: 0;
