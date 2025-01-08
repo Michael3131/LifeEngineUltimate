@@ -35,16 +35,12 @@ const FossilRecord = {
                 children: [],
             };
             // build new tree from that one?
-            console.log("before render of new",treeData)
-            TreeOfLifeChart.renderTree(treeData, "treeContainer")
             TreeOfLifeChart.incrementPopulation(org.species.name);
+            TreeOfLifeChart.renderTree(treeData)
         }
         else
         {
-            // console.log("BEFORE");
-            // console.log(org);
-            // console.log("org");
-            // console.log(ancestor);
+
             const newSpecies = {
                 name: org.species.name,         // Name of the new species
                 parent: ancestor.name,     // Parent species name
