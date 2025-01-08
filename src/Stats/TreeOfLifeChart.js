@@ -13,6 +13,8 @@ const extinctSpeciesSet = new Set(); // Track extinct species
 
 // Global threshold for subtree visibility
 let populationThreshold = 1;
+
+let canExtintRebuild = true;
 let isRenderingEnabled = true; // Control flag for rendering
 let showExtinctLeaves = true; // Default state
 
@@ -305,7 +307,11 @@ export function incrementPopulation(speciesName) {
 
 export function markSpeciesExtinct(speciesName) {
     extinctSpeciesSet.add(speciesName); // Mark species as extinct
-    renderTree(treeData);
+
+    if (canExtintRebuild)
+    {
+        renderTree(treeData);
+    }
 }
 
 // export function enableRendering() {
@@ -362,8 +368,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const timesTenth = document.getElementById("population-threshold-tenth").addEventListener("click", (event) => {
         updateThreshold(Math.ceil(populationThreshold / 10.0));
     });;
+    
+    const forceRefresh = document.getElementById("force-refresh-tree").addEventListener("click", (event) => {
+        renderTree(treeData)
+    });;
 
+    
 
+    const extinctCanRebuild = document.getElementById("extinctCanRebuild").addEventListener("click", (event) => {
+        canExtintRebuild = event.target.checked
+    });;
 });
 
 
