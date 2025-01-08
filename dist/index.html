@@ -12,13 +12,13 @@
 	<body>
 		<script src="./js/bundle.js"></script>
 		
+		<div id="anatomy-tooltip" style="position: absolute; display: none; pointer-events: none; z-index: 2000"></div>
 		<div id='env'>
 			<div id="treeContainer" style="width: 100%; height:100%; overflow: hidden;"></div>
 			<canvas id='env-canvas'></canvas>
 		</div>
 
 
-		<div id="anatomy-tooltip" style="position: absolute; display: none; pointer-events: none;"></div>
 
 		<div class='control-panel'>
 			<div id='speed-controller' class='control-set'>
@@ -322,6 +322,27 @@
 							<input type="checkbox" id="toggle-extinct-leaves" checked>
 						</label>
 					</div>
+					<table id="thresholdButtons">
+						<tr>
+							<td>
+								<button class="thresholdButtonsType" id="population-threshold-ten">Threshold x 10</button>
+							</td>
+							<td>
+								<button class="thresholdButtonsType" id="population-threshold-tenth">Threshold x .10</button>	
+							</td>
+							<td>
+								<button class="thresholdButtonsType" id="population-threshold-two">Threshold x 2</button>
+							</td>
+							<td>
+								<button class="thresholdButtonsType" id="population-threshold-secondth">Threshold x .20</button>
+							</td>
+							<td>
+								<button id="lolnth">Threshold x lol</button>
+							</td>
+						</tr>
+					</table>
+
+
 				</div>
 			</div>
 		</div>
