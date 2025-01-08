@@ -12,34 +12,31 @@ const populationMap = new Map();
 const extinctSpeciesSet = new Set(); // Track extinct species
 
 // Global threshold for subtree visibility
-let populationThreshold = 0;
+let populationThreshold = 1;
 let isRenderingEnabled = true; // Control flag for rendering
 
 export function setPopulationThreshold(threshold) {
     populationThreshold = threshold;
     // Re-render the tree with the new threshold
-    if (isRenderingEnabled) {
-        d3.select("#treeContainer").html("");
+    //d3.select("#treeContainer").html("");
+    if (treeData)
+    {
         renderTree(treeData, "treeContainer");
+        const sliderValue = document.getElementById('slider-value');
+        sliderValue.textContent = populationThreshold; // Update displayed value
+
     }
+
 }
 
-export function changePopulationThreshold10x() {
-    populationThreshold = populationThreshold * 10;
+export function multiplyPopulationThreshold(thresholdMultiplier) {
     // Re-render the tree with the new threshold
-    if (isRenderingEnabled) {
-        d3.select("#treeContainer").html("");
-        renderTree(treeData, "treeContainer");
-    }
+    console.log(thresholdMultiplier)
+
+    setPopulationThreshold(Math.ceil(thresholdMultiplier * populationThreshold))
 }
-export function changePopulationThresholddiv10() {
-    populationThreshold = Math.ceil(populationThreshold * .1);
-    // Re-render the tree with the new threshold
-    if (isRenderingEnabled) {
-        d3.select("#treeContainer").html("");
-        renderTree(treeData, "treeContainer");
-    }
-}
+
+
 
 export function searchForNodeByName(node, name) {
     if (node.name === name) return node;
@@ -68,7 +65,6 @@ let showExtinctLeaves = false; // Default state
 export function setShowExtinctLeaves(show) {
     showExtinctLeaves = show;
     if (isRenderingEnabled) {
-        d3.select("#treeContainer").html("");
         renderTree(treeData, "treeContainer");
     }
 }
@@ -134,12 +130,14 @@ export function showAnatomyTooltip(event, anatomy) {
          top = pageHeight - tooltipHeight - 10;
      }
  
-     tooltip.style("left", `${left}px`);
-     tooltip.style("top", `${top}px`);
+     //tooltip.style("left", `${left}px`);
+     //tooltip.style("top", `${top}px`);
 }
 
 
-export function renderTree(initialData, containerId) {
+export function renderTree(initialData) {
+    d3.select("#treeContainer").html("");
+
     if (!isRenderingEnabled && treeData) return; // Skip rendering if disabled
 
     treeData = initialData; // Set the initial tree data
@@ -147,10 +145,10 @@ export function renderTree(initialData, containerId) {
     const container = d3.select("#treeContainer");
 
     // Get container dimensions
-    const width = container.node().clientWidth -(container.node().clientWidth)/4;
+    const width =  container.node().clientWidth -(container.node().clientWidth)/4;
     const height = container.node().clientHeight//-(container.node().clientHeight)/4;
-   
-    const svg = d3.select(`#${containerId}`)
+
+    const svg = d3.select("#treeContainer")
         .append("svg")
         .attr("width", width)
         .attr("height", height)
@@ -173,6 +171,11 @@ export function renderTree(initialData, containerId) {
     const g = svg;
 
     const filteredTreeData = filterTreeByPopulation(treeData);
+    if (!filteredTreeData)
+    {
+        console.log("hmm")
+        console.log(treeData)
+    }
     const root = d3.hierarchy(filteredTreeData);
 
     // Create a radial tree layout
@@ -233,11 +236,11 @@ export function renderTree(initialData, containerId) {
                     showAnatomyTooltip(event, anatomy);
                 }
             })
-            .on("mousemove", function (event) {
-                const tooltip = d3.select("#anatomy-tooltip");
-                tooltip.style("left", `${event.pageX + 10}px`)
-                       .style("top", `${event.pageY}px`);
-            })
+            // .on("mousemove", function (event) {
+            //     const tooltip = d3.select("#anatomy-tooltip");
+            //     tooltip.style("left", `${event.pageX + 10}px`)
+            //            .style("top", `${event.pageY}px`);
+            // })
             .on("mouseout", function () {
                 d3.select("#anatomy-tooltip").style("display", "none");
             });
@@ -288,12 +291,11 @@ export function updateTree(newSpecies) {
         if (!parentNode.children) parentNode.children = [];
         parentNode.children.push(newSpecies);
         // Initialize population in the map
-        populationMap.set(newSpecies.name, 0);
+        populationMap.set(newSpecies.name, 1);
     }
 
     // Re-render the tree
     if (isRenderingEnabled) {
-        d3.select("#treeContainer").html(""); // Clear the current tree
         renderTree(treeData, "treeContainer");
     }
 }
@@ -306,7 +308,6 @@ export function incrementPopulation(speciesName) {
 export function markSpeciesExtinct(speciesName) {
     extinctSpeciesSet.add(speciesName); // Mark species as extinct
     if (isRenderingEnabled) {
-        d3.select("#treeContainer").html("");
         renderTree(treeData, "treeContainer");
     }
 }
