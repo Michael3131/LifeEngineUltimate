@@ -14,6 +14,7 @@ const extinctSpeciesSet = new Set(); // Track extinct species
 // Global threshold for subtree visibility
 let populationThreshold = 1;
 let isRenderingEnabled = true; // Control flag for rendering
+let showExtinctLeaves = true; // Default state
 
 export function setPopulationThreshold(threshold) {
     populationThreshold = threshold;
@@ -60,13 +61,11 @@ function calculateSubtreePopulation(node) {
 
 
 
-let showExtinctLeaves = false; // Default state
 
 export function setShowExtinctLeaves(show) {
     showExtinctLeaves = show;
-    if (isRenderingEnabled) {
-        renderTree(treeData, "treeContainer");
-    }
+    renderTree(treeData);
+    
 }
 
 function filterTreeByPopulation(node) {
@@ -295,9 +294,8 @@ export function updateTree(newSpecies) {
     }
 
     // Re-render the tree
-    if (isRenderingEnabled) {
-        renderTree(treeData, "treeContainer");
-    }
+    renderTree(treeData);
+    
 }
 
 export function incrementPopulation(speciesName) {
@@ -307,15 +305,13 @@ export function incrementPopulation(speciesName) {
 
 export function markSpeciesExtinct(speciesName) {
     extinctSpeciesSet.add(speciesName); // Mark species as extinct
-    if (isRenderingEnabled) {
-        renderTree(treeData, "treeContainer");
-    }
+    renderTree(treeData);
 }
 
-export function enableRendering() {
-    isRenderingEnabled = true;
-    renderTree(treeData, "treeContainer"); // Re-render when re-enabled
-}
+// export function enableRendering() {
+//     isRenderingEnabled = true;
+//     renderTree(treeData); // Re-render when re-enabled
+// }
 
 export function disableRendering() {
     isRenderingEnabled = false;
@@ -326,4 +322,64 @@ export function clearTree() {
     populationMap.clear(); // Clear population data
     extinctSpeciesSet.clear(); // Clear extinction data
     d3.select("#treeContainer").html(""); // Clear the tree container
+}
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const slider = document.getElementById('population-threshold-slider');
+    const sliderValue = document.getElementById('slider-value');
+
+    slider.value = populationThreshold
+    sliderValue.textContent = populationThreshold
+    // Update the slider value and the threshold
+    slider.addEventListener('input', () => {
+        const threshold = parseInt(slider.value, 10);
+        updateThreshold(threshold)
+       
+        //setPopulationThreshold(threshold);  // Update the tree rendering
+    });
+
+
+    const toggle = document.getElementById("toggle-extinct-leaves");
+    if (toggle) {
+        toggle.addEventListener("change", (event) => {
+            setShowExtinctLeaves(event.target.checked);
+        });
+    } else {
+        console.error("Toggle element not found.");
+    }
+
+    const timesTen = document.getElementById("population-threshold-ten").addEventListener("click", (event) => {
+        updateThreshold(populationThreshold * 10);
+    });;
+    const timesTwo = document.getElementById("population-threshold-half").addEventListener("click", (event) => {
+        updateThreshold(Math.ceil(populationThreshold / 2.0));
+    });;
+    const timesHalf = document.getElementById("population-threshold-two").addEventListener("click", (event) => {
+        updateThreshold(populationThreshold * 2);
+    });;
+    const timesTenth = document.getElementById("population-threshold-tenth").addEventListener("click", (event) => {
+        updateThreshold(Math.ceil(populationThreshold / 10.0));
+    });;
+
+
+});
+
+
+function updateThreshold(newThreshold)
+{
+    populationThreshold = newThreshold;
+    const sliderValue = document.getElementById('slider-value');
+    const slider = document.getElementById('population-threshold-slider');
+
+    if (newThreshold > slider.max)
+    {
+        slider.max = newThreshold;
+    }
+    slider.value = newThreshold
+    sliderValue.textContent = newThreshold;
+
+    // rerender tree
+    renderTree(treeData)
 }

@@ -39,18 +39,7 @@ function mobileCheck() {
 //         });
 //     });
 // });
-document.addEventListener('DOMContentLoaded', () => {
-    const slider = document.getElementById('population-threshold-slider');
-    const sliderValue = document.getElementById('slider-value');
 
-    // Update the slider value and the threshold
-    slider.addEventListener('input', () => {
-        const threshold = parseInt(slider.value, 10);
-        sliderValue.textContent = threshold; // Update displayed value
-        console.log("New threashold:",threshold)
-        setPopulationThreshold(threshold);  // Update the tree rendering
-    });
-});
 
 
 // document.addEventListener("DOMContentLoaded", () => {
@@ -68,24 +57,3 @@ document.addEventListener('DOMContentLoaded', () => {
 //     });
 // });
 
-
-document.addEventListener("DOMContentLoaded", () => {
-    const toggle = document.getElementById("toggle-extinct-leaves");
-    if (toggle) {
-        toggle.addEventListener("change", (event) => {
-            const showExtinct = event.target.checked;
-            console.log("Toggle changed:", showExtinct);
-            setShowExtinctLeaves(showExtinct);
-        });
-    } else {
-        console.error("Toggle element not found.");
-    }
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-    const timesTen = document.getElementById("population-threshold-ten").addEventListener("click", (event) => {
-        multiplyPopulationThreshold(10)
-    });;
-    
-   
-});
