@@ -1,15 +1,14 @@
 'use strict';
 
 import Engine from './Engine';
-import { setPopulationThreshold, enableRendering, disableRendering, setShowExtinctLeaves } from './Stats/TreeOfLifeChart';
-import * as EditorController from './Controllers/EditorController';
+import { setPopulationThreshold, multiplyPopulationThreshold, setShowExtinctLeaves } from './Stats/TreeOfLifeChart';
 $('document').ready(function(){
     let isMobile = mobileCheck();
     if (isMobile) {
         alert("Welcome to the Life Engine! Be aware the website is not built for mobile, so try on desktop for the best experience!");
     }
     var engine = new Engine();
-    engine.start(60);
+    engine.start(160);
 });
 
 function mobileCheck() {
@@ -54,20 +53,20 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-document.addEventListener("DOMContentLoaded", () => {
-    const treeTab = document.getElementById("tree-of-life");
-    const allTabs = document.querySelectorAll(".tabnav-item");
+// document.addEventListener("DOMContentLoaded", () => {
+//     const treeTab = document.getElementById("tree-of-life");
+//     const allTabs = document.querySelectorAll(".tabnav-item");
 
-    allTabs.forEach(tab => {
-        tab.addEventListener("click", () => {
-            if (tab.id === "tree-of-life") {
-                enableRendering();
-            } else {
-                disableRendering();
-            }
-        });
-    });
-});
+//     allTabs.forEach(tab => {
+//         tab.addEventListener("click", () => {
+//             if (tab.id === "tree-of-life") {
+//                 enableRendering();
+//             } else {
+//                 disableRendering();
+//             }
+//         });
+//     });
+// });
 
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -81,4 +80,12 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
         console.error("Toggle element not found.");
     }
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    const timesTen = document.getElementById("population-threshold-ten").addEventListener("click", (event) => {
+        multiplyPopulationThreshold(10)
+    });;
+    
+   
 });
